@@ -6,7 +6,11 @@ import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
+import net.runelite.api.events.ChatMessage;
+import net.runelite.api.events.ClientTick;
 import net.runelite.api.events.GameStateChanged;
+import net.runelite.api.widgets.Widget;
+import net.runelite.client.chat.ChatMessageManager;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
@@ -22,32 +26,46 @@ public class FunnyBossNamesPlugin extends Plugin
 	private Client client;
 
 	@Inject
+	private ChatMessageManager chatMessageManager;
+
+	@Inject
 	private FunnyBossNamesConfig config;
 
-	@Override
-	protected void startUp() throws Exception
-	{
-		log.info("Example started!");
-	}
 
-	@Override
-	protected void shutDown() throws Exception
+
+	@Subscribe
+	public void onClientTick(ClientTick event)
 	{
-		log.info("Example stopped!");
+		Widget bossName = client.getWidget(303,9);
+		Widget colName = client.getWidget(621,12);
+		Widget colNameBig = client.getWidget(621,19);
+		Widget colNameSmall = client.getWidget(621,19);
+		Widget scoreBoardName = client.getWidget(817,6);
+
+
 	}
 
 	@Subscribe
-	public void onGameStateChanged(GameStateChanged gameStateChanged)
+	public void onChatMessage(ChatMessage event)
 	{
-		if (gameStateChanged.getGameState() == GameState.LOGGED_IN)
-		{
-			client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", "Example says " + config.greeting(), null);
-		}
+
 	}
 
 	@Provides
 	FunnyBossNamesConfig provideConfig(ConfigManager configManager)
 	{
 		return configManager.getConfig(FunnyBossNamesConfig.class);
+	}
+
+	@Override
+	protected void shutDown() throws Exception
+	{
+		log.info("Funny boss names plugin stopped!");
+	}
+
+	@Override
+	protected void startUp() throws Exception
+	{
+		log.info("Funny boss names plugin started!");
 	}
 }
